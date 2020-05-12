@@ -137,8 +137,7 @@ function sendRequest(callOptions, callback) {
     method='POST';
   }
 
-    console.log("uriuriuriuriuriuri    "+uri)
-  /**
+/**
    * You must build the requestOptions object.
    * This is not a simple copy/paste of the requestOptions object
    * from the previous lab. There should be no
