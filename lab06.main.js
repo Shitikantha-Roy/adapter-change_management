@@ -191,30 +191,21 @@ healthcheck(callback) {
    *   handles the response.
    */
   getRecord(callback) {
-        this.connector.get((data, error) => {
-            if (error) {
-                console.error(`\nError returned from GET request:\n${JSON.stringify(error)}`);
-                callback(error);
-            }
-            else {
-                let body = null;
-                //log.info(`\nResponse returned from GET request:\n${JSON.stringify(data)}`);
-                if (typeof data == 'object') {
-                    if (data.body) {
-                        body = JSON.parse(data.body);
-                        let result = body.result;
-                        result.forEach((obj, index) => {
-                            result[index] = this.getResult(obj);
-                        });
-                        log.info("Retunring " + JSON.stringify(result))
-                        callback(result);
-                        //return result;
-                    }
-                }
-            }
-        });
-    }
-    
+    /**
+     * Write the body for this function.
+     * The function is a wrapper for this.connector's get() method.
+     * Note how the object was instantiated in the constructor().
+     * get() takes a callback function.
+     */
+      this.connector.get((data, error) => {
+        if (error) {
+          console.error(`\nError returned from GET request:\n${JSON.stringify(error)}`);
+          callback(error);
+        }
+        console.log(`\nResponse returned from GET request:\n${JSON.stringify(data)}`);
+        callback(data);      
+      });
+    }    
     
 
   /**
@@ -227,56 +218,22 @@ healthcheck(callback) {
    *   handles the response.
    */
   postRecord(callback) {
-        this.connector.post((data, error) => {
-            log.info("postRecord started  connectorpost****");
-            if (error) {
-                console.error(`\nError returned from POST request:\n${JSON.stringify(error)}`);
-            }
-            else {
-                let result = null;
-                if (typeof data == 'object') {
-                    console.info(JSON.stringify(data));
-                    if (data.body) {
-                        let body = JSON.parse(data.body);
-                        result = body.result;
-                        result = this.getResult(result);
-                    }
-                }
-                callback(result);
-
-            }
-
-        });
-
-    }
-    
     /**
-     * @memberof ServiceNowAdapter
-     * @method getResult
-     * @summary Build custom result object.
-     * @description Builds a new result object from response data.
-     *
-     * @param {object} responseData - The response json result
+     * Write the body for this function.
+     * The function is a wrapper for this.connector's post() method.
+     * Note how the object was instantiated in the constructor().
+     * post() takes a callback function.
      */
-
-    getResult(responseData) {
-
-        return {
-            'change_ticket_number': responseData.number,
-            'active': responseData.active,
-            'priority': responseData.priority,
-            'description': responseData.description,
-            'work_start': responseData.work_start,
-            'work_end': responseData.work_end,
-            'change_ticket_key': responseData.sys_id
-        };
-
+      this.connector.post((data, error) => {
+          if (error) {
+            console.error(`\nError returned from POST request:\n${JSON.stringify(error)}`);
+            callback(error);
+          }
+          console.log(`\nResponse returned from POST request:\n${JSON.stringify(data)}`);
+         callback(data);
+        });    
     }
-   
 
 }
-
-
-
 module.exports = ServiceNowAdapter;
 
