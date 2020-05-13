@@ -65,6 +65,13 @@ class ServiceNowAdapter extends EventEmitter {
       username: this.props.auth.username,
       password: this.props.auth.password,
       serviceNowTable: this.props.serviceNowTable
+      // For local testing
+      /**
+      url: 'https://dev94923.service-now.com/',
+      username: 'admin',
+      password: 'Payton01',
+      serviceNowTable: 'change_request'
+      **/
     });
   }
 
@@ -114,6 +121,11 @@ healthcheck(callback) {
       * healthcheck(), execute it passing the error seen as an argument
       * for the callback's errorMessage parameter.
       */
+        this.emitOffline();
+        log.error(`ServiceNow: Instance is unavailable.  ID: stever ${JSON.stringify(error)}`); // for debugging
+        // log.error('ServiceNow: Instance is unavailable.  ID:') //+ this.id);
+        return error;
+
    } else {
      /**
       * Write this block.
@@ -125,10 +137,12 @@ healthcheck(callback) {
       * parameter as an argument for the callback function's
       * responseData parameter.
       */
+        this.emitOnline()
+        // log.info(`ServiceNow: Instance is available.  ID: stever ${JSON.stringify(result)}`); // for debugging
+        return result;
    }
  });
 }
-
 
   /**
    * @memberof ServiceNowAdapter
@@ -183,8 +197,16 @@ healthcheck(callback) {
      * Note how the object was instantiated in the constructor().
      * get() takes a callback function.
      */
-     ServiceNowConnector.get(callback);
-  }
+      this.connector.get((data, error) => {
+        if (error) {
+          console.error(`\nError returned from GET request:\n${JSON.stringify(error)}`);
+          callback(error);
+        }
+        console.log(`\nResponse returned from GET request:\n${JSON.stringify(data)}`);
+        callback(data);      
+      });
+    }    
+    
 
   /**
    * @memberof ServiceNowAdapter
@@ -202,8 +224,16 @@ healthcheck(callback) {
      * Note how the object was instantiated in the constructor().
      * post() takes a callback function.
      */
-      ServiceNowConnector.post(callback);
-  }
-}
+      this.connector.post((data, error) => {
+          if (error) {
+            console.error(`\nError returned from POST request:\n${JSON.stringify(error)}`);
+            callback(error);
+          }
+          console.log(`\nResponse returned from POST request:\n${JSON.stringify(data)}`);
+         callback(data);
+        });    
+    }
 
+}
 module.exports = ServiceNowAdapter;
+
